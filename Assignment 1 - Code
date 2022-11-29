@@ -1,0 +1,33 @@
+with open('trees.txt', 'r') as a1:
+    for a2 in a1:
+        #print(a2)
+        a3 = a2.upper()
+        #print(a3)
+        #Remove unwanted character "-"
+        a4 = a3.replace("-", " ")
+        #Remove unwanted character "'"
+        a5 = a4.replace("'", " ")
+        #Remove unwanted character " "
+        a6 = a5.replace(" ", "")
+        #Add characters where it's required and write abbreviations into Intermediate file
+        if len(a6) < 8:
+            #print("This word has less than 8 letters: "+a6+"")
+            #var = "******"
+            a6=a6+"++++"
+            #print(a6)
+        a7 = a6[0] + a6[2] + a6[4] + "\n"
+        intfile = open('Intermediate.txt', 'a')
+        intfile.write(a7)
+        
+        #Remove duplicates
+        with open('Intermediate.txt', 'r') as x:
+            if a7 == x:
+                a7 = a6[0] + a6[3] + a6[6] + "\n"
+                #print(a7)
+        #print(a7)
+
+#Write abbreviations (without duplicates) into new file
+a8 = open('Peiris_trees_abbrevs.txt', 'a')
+a8.write(a7)
+a9 = open('Peiris_trees_abbrevs.txt', 'r')
+#print(a9.read())
