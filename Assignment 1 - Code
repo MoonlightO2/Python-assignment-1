@@ -1,13 +1,22 @@
+import re
+import os
+
 def abbreviations(newstr):
+    print(newstr)
     """Print all 3-element subsequences of a string."""
     for i in range(len(newstr)):
         for j in range(i + 1, len(newstr)):
             for k in range(j + 1, len(newstr)):
-                print(newstr[i] + newstr[j] + newstr[k])
+                m = newstr[i] + newstr[j] + newstr[k]
+                mm = m.strip()
+                if len(mm) == 3:
+                    if mm[0] == newstr[0]:
+                        print(mm)
     print()
 
 
 def normalisedata(a1):
+    os.remove("file1.txt")
     for a2 in a1:
         #Convert to upper case
         a3 = a2.upper()
@@ -25,6 +34,7 @@ def normalisedata(a1):
 
 with open('trees.txt', 'r') as treenames:
     normalisedata(treenames)
+
 
 with open('file1.txt', 'r') as abbs:
     for abbvs in abbs:
