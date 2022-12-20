@@ -1,4 +1,3 @@
-
 import re
 import os
 
@@ -74,11 +73,10 @@ def assignlettervalues(filename):
 
 
 #Assign values for abbreviations
-def assignabbvalues(abbval):
+def calculateabbvalues(abbval):
     print("Assign values to letters")
     with open('file1.txt', 'r') as file1:
         lettervalue = assignlettervalues("values.txt")
         print(lettervalue)
         for i in j:
-            sss
-
+            sss    
