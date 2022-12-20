@@ -1,6 +1,7 @@
 import re
 import os
 
+#Main function
 def main():
     tree = input("Enter a name of a tree: ")
 
@@ -24,6 +25,7 @@ def main():
     print(fileop2.read())
 
 
+#Creating abbreviations
 def abbreviations(newstr):
     print(newstr)
     """Print all 3-element subsequences of a string."""
@@ -37,12 +39,15 @@ def abbreviations(newstr):
                         print(mm)
     print()
 
-# Remove duplicates
+
+#Remove duplicates
 def removeduplicates():
     mylist = ["a", "b", "a", "c", "c"]
     mylist = list(dict.fromkeys(mylist))
     print(mylist)
 
+
+#Remove unwanted characters ("-", "'", " ")
 def normalisedata(a1):
     os.remove("file1.txt")
     for a2 in a1:
@@ -55,16 +60,19 @@ def normalisedata(a1):
         a5 = a4.replace("'", " ")
         # Remove unwanted character " "
         a6 = a5.replace(" ", "")
+        a6 = a6.strip()
         #print(a6)
         with open("file1.txt", "a") as a7:
             a7.write(a6)
 
 
+#Assign values for letters in value.txt file
 def assignlettervalues(filename):
     with open(filename, 'r') as modules:
        return dict(map(lambda x: x.rstrip().split(maxsplit=1), modules))
 
 
+#Assign values for abbreviations
 def assignabbvalues(abbval):
     print("Assign values to letters")
     with open('file1.txt', 'r') as file1:
@@ -72,3 +80,8 @@ def assignabbvalues(abbval):
         print(lettervalue)
         for i in j:
             sss
+
+
+#Remove duplicate abbreviations
+def removeduplicates():
+    
