@@ -1,3 +1,4 @@
+
 import re
 import os
 
@@ -40,7 +41,7 @@ def abbreviations(newstr):
     print()
 
 
-#Remove duplicates
+#Remove duplicate abbreviations
 def removeduplicates():
     mylist = ["a", "b", "a", "c", "c"]
     mylist = list(dict.fromkeys(mylist))
@@ -79,9 +80,5 @@ def assignabbvalues(abbval):
         lettervalue = assignlettervalues("values.txt")
         print(lettervalue)
         for i in j:
-            sss
+            sss    
 
-
-#Remove duplicate abbreviations
-def removeduplicates():
-    
