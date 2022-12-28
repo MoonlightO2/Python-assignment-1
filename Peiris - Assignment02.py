@@ -1,10 +1,35 @@
 import folium
+from folium.plugins import MarkerCluster
+import pandas as pd
+import webbrowser
 
-map = folium.Map(location=[56.47386042203257, -2.964379206760871], zoom_start=15)
-folium.CircleMarker(location=[56.47386042203257, -2.964379206760871], radius=50, popup="anyplace2").add_to(map)
-folium.Marker([56.47386042203257, -2.964379206760871], popup="unknown place").add_to(map)
-folium.PolyLine(locations=[(56.47386042203257, -2.964379206760871), (56.47386042203257, -2.964379206760871)], line_opacity=8.6).add_to(map)
+# Load data
+data = pd.read_csv("GrowLocations.csv")
+lat = data['Latitude']
+lon = data['Longitude']
+typ = data['Type']
 
-print("Creating map.....")
-map.save("map.html")
-print("Map created.....")
+# Create a base map
+map = folium.Map(location=[56.473763, -2.964372], zoom_start=4.5, tiles="openstreetmap")
+
+# To create clusters
+markercluster = MarkerCluster().add_to(map)
+
+# Add all markers
+for lat, lon, typ in zip(lat, lon, typ):
+    folium.CircleMarker(location=[lat, lon], radius=8, popup=str(typ), fill_color="red", color="white", fill_opacity=0.9).add_to(map)
+
+title_html = '''
+                <div style="position: fixed; 
+                            bottom: 50px; left: 50px; width: 300px; height: 30px; 
+                            border:2px solid black; z-index:9999; font-size:16px; font-align:center;
+                            color:white">&nbsp; Grow Locations UK
+                </div>
+                '''
+
+map.get_root().html.add_child(folium.Element(title_html))
+print("Saving map....")
+map.save("Grow Locations UK.html")
+print("Loading map....")
+webbrowser.open_new_tab("Grow Locations UK.html")
+print("Map loaded successfully....")
