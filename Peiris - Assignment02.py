@@ -5,6 +5,12 @@ import webbrowser
 
 # Load data
 data = pd.read_csv("GrowLocations.csv")
+
+# Removing erroneous data
+print("Removing erroneous data...")
+data = data.dropna(subset=['Serial'])
+print("Erroneous data removed...")
+
 lat = data['Latitude']
 lon = data['Longitude']
 typ = data['Type']
