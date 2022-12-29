@@ -3,6 +3,8 @@ from folium.plugins import MarkerCluster
 import pandas as pd
 import webbrowser
 import matplotlib.pyplot as plt
+import time
+start = time.process_time()
 
 # Load data from CSV to Dataset "data"
 data = pd.read_csv("GrowLocations.csv")
@@ -93,6 +95,7 @@ title_html = '''
 map.get_root().html.add_child(folium.Element(title_html))
 print("\nSaving map....")
 map.save("Grow Locations UK.html")
-print("\nLoading map....")
+print("\nLoading map....", time.process_time() - start)
 webbrowser.open_new_tab("Grow Locations UK.html")
 print("\nMap loaded successfully....")
+print("\n\nTotal time taken: ", time.process_time() - start)
