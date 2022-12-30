@@ -1,15 +1,22 @@
-import folium
-from folium.plugins import MarkerCluster
+# import folium
+# from folium.plugins import minimap
+import numpy as np
 import pandas as pd
 import webbrowser
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 import time
+import gc
+
 start = time.process_time()
 
 # Load data from CSV to Dataset "data"
-data = pd.read_csv("GrowLocations.csv")
+data = pd.read_csv('GrowLocations.csv')
 print("\nGrow Locations Dataset - Shape (Before cleaning)")
 print(data.shape)
+
+# Displaying the list of column names
+print('\nList of column names : ', list(data.columns))
 
 # Removing erroneous data
 print("\nShow all erroneous data....")
@@ -24,6 +31,10 @@ print(data.shape)
 print("\nGrow Locations Dataset - Data Types")
 print(data.dtypes)
 
+# Print dataset into CSV - export to csv to see whether the dataset has all clean data
+print("\nExport dataset into CSV...")
+data.to_csv('CleanGrowLocations.csv', index=False)
+
 print("\nShow all unique types")
 data = pd.DataFrame(data)
 data.Type = data.Type.replace('Thingful.Connectors.GROWSensors.AirTemperature', 'Air Temperature')
@@ -33,69 +44,47 @@ data.Type = data.Type.replace('Thingful.Connectors.GROWSensors.Light', 'Light')
 data.Type = data.Type.replace('Thingful.Connectors.GROWSensors.SoilMoisture', 'Soil Moisture')
 data.Type = data.Type.replace('Thingful.Connectors.GROWSensors.WaterTankLevel', 'Water Tank Level')
 
-# Adding Legend based on Type
-
-"""
-# Map image showing
-plt.legend("map7.png")
-plt.show()
-"""
 # print(data.Type.unique())
+print("\nTypes list")
 print(data['Type'].value_counts())
 
-lat = data['Latitude']
-lon = data['Longitude']
-typ = data['Type']
+# find max/min, plug into a website, snip area as png and insert as plotmap
+BBox = ((-10.592, 1.6848, 50.681, 57.985))
 
-# Create base map
-map = folium.Map(location=[56.473763, -2.964372], zoom_start=4.5, tiles="openstreetmap")
+# read the image in, plot points over image
+grow_map = "map7.png"
+truth_plot = plt.imread(grow_map)
+fig, ax = plt.subplots(figsize=(8, 8), linewidth=0.1)
+plot_title = "Grow Locations UK"
+ax.set_title(plot_title)
+ax.set_xlabel("Longitude")
+ax.set_ylabel("Latitude")
+ax.set_xlim(BBox[0], BBox[1])
+ax.set_ylim(BBox[2], BBox[3])
 
-# add tile layers
-folium.TileLayer('openstreetmap').add_to(map)
-folium.TileLayer('stamenterrain').add_to(map)
-folium.TileLayer('stamentoner').add_to(map)
-folium.TileLayer('stamenwatercolor').add_to(map)
-folium.TileLayer('cartodbpositron').add_to(map)
-folium.TileLayer('cartodbdark_matter').add_to(map)
+scat = ax.scatter(data.Latitude, data.Longitude, zorder=1, alpha=0.5, c='b', s=10)
+color_data = np.random.random((500, len(data.Latitude)))
 
-# The following tile layers did not work
-# folium.TileLayer('mapquestopen').add_to(map)
-# folium.TileLayer('MapQuest Open Aerial').add_to(map)
-# folium.TileLayer('Mapbox Bright').add_to(map)
-# folium.TileLayer('Mapbox Control Room').add_to(map)
 
-# add layers control over the map
-folium.LayerControl().add_to(map)
+def update(frame):
+    scat.set_array(color_data[frame])
+    return scat,
 
-"""
-# To create clusters (I didn't like this feature so did not use it)
-# markercluster = MarkerCluster().add_to(map)
-"""
 
-# Add all markers according to types (Types in different colors)
-for lat, lon, typ in zip(lat, lon, typ):
-    if typ == "Air Temperature":
-        folium.CircleMarker(fill_color="blue", location=[lat, lon], radius=8, popup=str(typ), color="white", fill_opacity=0.9).add_to(map)
-    elif typ == "Battery Level":
-        folium.CircleMarker(fill_color="green", location=[lat, lon], radius=8, popup=str(typ), color="white", fill_opacity=0.9).add_to(map)
-    elif typ == "Fertilizer Level":
-        folium.CircleMarker(fill_color="red", location=[lat, lon], radius=8, popup=str(typ), color="white", fill_opacity=0.9).add_to(map)
-    elif typ == "Light":
-        folium.CircleMarker(fill_color="orange", location=[lat, lon], radius=8, popup=str(typ), color="white", fill_opacity=0.9).add_to(map)
-    elif typ == "Soil Moisture":
-        folium.CircleMarker(fill_color="brown", location=[lat, lon], radius=8, popup=str(typ), color="white", fill_opacity=0.9).add_to(map)
-    elif typ == "Water Tank Level":
-        folium.CircleMarker(fill_color="purple", location=[lat, lon], radius=8, popup=str(typ), color="white", fill_opacity=0.9).add_to(map)
+anime = FuncAnimation(fig, update, frames=range(500), blit=True)
 
-title_html = '''
-<div style="position: fixed; bottom: 50px; left: 50px; width: 250px; height: 30px; z-index:9999; font-family: Tahoma; font-size:20px; font-weight: bold; color:black">&nbsp; Grow Locations UK
-</div>
-'''
+ax.imshow(truth_plot, zorder=0, extent=BBox, aspect='equal')
+print("\nLoading map image....")
+print("\nTime taken to load map image....", time.process_time() - start)
+plt.show()
+print("\nMap image closed....")
 
-map.get_root().html.add_child(folium.Element(title_html))
-print("\nSaving map....")
-map.save("Grow Locations UK.html")
-print("\nLoading map....", time.process_time() - start)
-webbrowser.open_new_tab("Grow Locations UK.html")
-print("\nMap loaded successfully....")
 print("\n\nTotal time taken: ", time.process_time() - start)
+
+print("\nDeleting data to clear memory....")
+del data
+gc.collect()
+try:
+    print(data)
+except:
+    print("\nMemory cleared successfully....")
